@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<otrs_package version="1.0">
+    <CVS>$Id$</CVS>
+    <Name>NotificationEventX</Name>
+    <Vendor>c.a.p.e. IT GmbH</Vendor>
+    <URL>http://www.cape-it.de/</URL>
+    <Description Lang="en">NotificationEventX - Extension package for OTRS.</Description>
+    <Description Lang="de">NotificationEventX - Erweiterungspaket fuer OTRS.</Description>
+    <License>GNU AFFERO GENERAL PUBLIC LICENSE Version 3, November 2007</License>
+    <Version>1.0.0</Version>
+    <Framework>5.0.x</Framework>
+    <BuildDate>?</BuildDate>
+    <BuildHost>?</BuildHost>
+    <Filelist>
+        <File Permission="644" Location="doc/en/NotificationEventX.pdf"/>
+        <File Permission="644" Location="doc/CHANGES_NotificationEventX.md"/>
+        <File Permission="644" Location="Kernel/Config/Files/NotificationEventX.xml"/>
+        <File Permission="644" Location="Kernel/Language/de_NotificationEventX.pm"/>
+        <File Permission="644" Location="Kernel/Modules/AgentOverlayPopup.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Dashboard/AgentOverlay.pm"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/NotificationEvent/Email/DefaultNoProduct.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/NotificationEvent/Email/UnformattedNoProduct.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminNotificationEventTransportAgentOverlaySettings.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AdminNotificationEventTransportEmailXSettings.tt"/>
+        <File Permission="644" Location="Kernel/Output/HTML/Templates/Standard/AgentDashboardOverlayOverview.tt"/>
+        <File Permission="644" Location="Kernel/System/Ticket/Event/NotificationEvent/Transport/AgentOverlay.pm"/>
+        <File Permission="644" Location="Kernel/System/Ticket/Event/NotificationEvent/Transport/EmailX.pm"/>
+        <File Permission="644" Location="Kernel/System/AgentOverlay.pm"/>
+        <File Permission="644" Location="var/packagesetup/NotificationEventX.pm"/>
+    </Filelist>
+    <DatabaseInstall>
+        <TableCreate Name="overlay_agent">
+            <Column Name="id"      Required="true" Type="INTEGER"  PrimaryKey="true" AutoIncrement="true"/>
+            <Column Name="subject" Required="true" Type="VARCHAR" Size="250"/>
+            <Column Name="message" Required="true" Type="VARCHAR" Size="65535"/>
+            <Column Name="decay"   Required="true" Type="INTEGER"/>
+            <Column Name="user_id" Required="true" Type="INTEGER"/>
+            <Column Name="popup"   Required="true" Type="INTEGER"/>
+        </TableCreate>
+    </DatabaseInstall>
+    <DatabaseReinstall></DatabaseReinstall>
+    <DatabaseUpgrade></DatabaseUpgrade>
+    <DatabaseUninstall>
+        <TableDrop Name="overlay_agent"/>
+    </DatabaseUninstall>
+    <CodeInstall Type="post"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        $Kernel::OM->Get($CodeModule)->CodeInstall();
+        ]]>
+    </CodeInstall>
+    <CodeReinstall Type="post"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+        $Kernel::OM->Get($CodeModule)->CodeReinstall();
+        ]]>
+    </CodeReinstall>
+    <CodeUpgrade Type="post"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+        $Kernel::OM->Get($CodeModule)->CodeUpgrade();
+        ]]>
+    </CodeUpgrade>
+    <CodeUpgrade Type="post" Version="4.99.80"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+        $Kernel::OM->Get($CodeModule)->CodeUpgrade_5();
+        ]]>
+    </CodeUpgrade>
+    <CodeUpgrade Type="post" Version="5.0.3"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+        $Kernel::OM->Get($CodeModule)->CodeUpgrade_5_0_3();
+        ]]>
+    </CodeUpgrade>
+    <CodeUninstall Type="pre"><![CDATA[
+        my $CodeModule = 'var::packagesetup::' . $Param{Structure}->{Name}->{Content};
+        # discard internally stored object, so that the next access to object creates them newly
+        $Kernel::OM->ObjectsDiscard(
+            Objects            => [$CodeModule],
+            ForcePackageReload => 1,
+        );
+        $Kernel::OM->Get($CodeModule)->CodeUninstall();
+        ]]>
+    </CodeUninstall>
+    <IntroInstall Type="pre" Title="Install Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to install the OTRS module NotificationEventX.<br/>
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroInstall>
+    <IntroInstall Type="post" Title="Installation Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>Important Advice:</strong>
+        <br/>
+        <br/>
+        You must rebuild your configuration before you continue the use of this OTRS installation.
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroInstall>
+    <IntroUpgrade Type="pre" Title="Upgrade Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to upgrade the NotificationEventX extensions package for OTRS.
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroUpgrade>
+    <IntroUpgrade Type="post" Title="Upgrade Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>Important Advice:</strong>
+        <br/>
+        <br/>
+        You must rebuild your configuration before you continue the use of this OTRS installation.
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroUpgrade>
+    <IntroUninstall Type="pre" Title="Uninstallation Information" Lang="en"><![CDATA[
+        <br/>
+        <strong>WELCOME</strong>
+        <br/>
+        <br/>
+        You are about to UNINSTALL the NotificationEventX extensions package for OTRS.<br/>
+        <br/>
+        <strong>Important Advice:</strong><br/>
+        <br/>
+        NotificationEventX related parameters of notifications are going to be permanently deleted also in case of reinstallation.<br/>
+        <br/>
+        <br/>
+        <br/>
+        c.a.p.e. IT ...easy.<br/>
+        <br/>
+    ]]></IntroUninstall>
+</otrs_package>
